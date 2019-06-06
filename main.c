@@ -1,8 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
+
 #include <time.h>
 
+int check_config()
+{
+    int i,j;
+    FILE *fp;
+   if ((fp=fopen("config.txt", "r"))==NULL) {
+     printf ("Nie moge otworzyc pliku config.txt do zapisu!\n");
+     exit(1);
+     }
+    char tab[13];
+    for(i=0;i<13;i++)
+    {
+        fscanf(fp,"%c", &tab[i]);
+    }
+    if(tab[12] == 'y')
+        return 1;
+    else if(tab[12] == 'n')
+        return 0;
+    else
+        return 3;
+    fclose (fp);
+}
 
 void cells(char board[16][16])
 {
@@ -14,23 +35,50 @@ void cells(char board[16][16])
 
 }
 
-void config(char board[31][31])
+void config(char board[31][61])
 {
-    FILE *plik = fopen("config.txt", "r");
+    char k = '1';
     int i,j;
-    for(i=1;i<30;i++)
+    FILE *fp;
+   if ((fp=fopen("config.txt", "r"))==NULL) {
+     printf ("Nie moge otworzyc pliku config.txt do zapisu!\n");
+     exit(1);
+     }
+
+for(i=1;i<30;i++)
+{
+    for(j=1;j<60;j++)
     {
-        for(j=1;j<30;j++)
-        {
-            char temp[31][31];
-            fscanf(plik, "%s", &temp[i][j]);
-            board[i][j] = temp[i][j];
+        if(k!=EOF){
+            do
+            {
+                fscanf(fp, "%c", &k);
+            }
+            while (k!='.' && k!='X' && k!=EOF);
         }
+        board[i][j]=k;
     }
-    fclose(plik);
+
+}
+fclose (fp);
+/*for(i=1;i<30;i++)
+{
+    for(j=1;j<60;j++)
+    {
+        printf("%c", board[i][j]);
+    }
+    printf("\n");
 }
 
-void random_cells(char board[31][31])
+
+   return 0;*/
+}
+void out()
+{
+
+}
+
+void random_cells(char board[31][61])
 {
 int p,z,x,y;
 srand( time( NULL ) );
@@ -39,7 +87,7 @@ scanf("%d", &p);
 for(z=0;z<p;z++)
 {
     x = rand()%29+1;
-    y = rand()%29+1;
+    y = rand()%59+1;
     board[x][y] = 'X';
 }
 }
@@ -51,12 +99,12 @@ void delay(float seconds)
     while (clock() < start_time + milli_seconds);
 }
 
-void next_step(char board[31][31], int board2[31][31])
+void next_step(char board[31][61], int board2[31][61])
 {
     int i,j,count=0;
     for(i=1;i<30;i++)
     {
-        for(j=1;j<30;j++)
+        for(j=1;j<60;j++)
         {
             if(board[i-1][j-1] == 'X')
                 count++;
@@ -81,7 +129,7 @@ void next_step(char board[31][31], int board2[31][31])
     }
     for(i=0;i<31;i++)
     {
-        for(j=0;j<31;j++)
+        for(j=0;j<61;j++)
         {
             if(board2[i][j] == 3)
                 board[i][j] = 'X';
@@ -95,22 +143,36 @@ void next_step(char board[31][31], int board2[31][31])
     system("cls");
     for(i=1;i<30;i++)
     {
-        for(j=1;j<30;j++)
+        for(j=1;j<60;j++)
         {
-            printf("%c ",board[i][j]);
+            printf("%c",board[i][j]);
         }
         printf("\n");
     }
+    /*int alive=0,dead=0;
+
+    for(i=1;i<30;i++)
+    {
+        for(j=1;j<30;j++)
+        {
+            if(board[i][j] == 'X')
+                alive=alive+1;
+            else
+                dead=dead+1;
+        }
+        system("cls");
+    }*/
+
 }
 
 int main()
 {
-    int i,j,c,d,m,n,seconds=1;
-    char board[31][31];
-    int board2[31][31];
+    int i,j,c,d,seconds=1;
+    char board[31][61];
+    int board2[31][61];
     for(i=0;i<31;i++)
     {
-        for(j=0;j<31;j++)
+        for(j=0;j<61;j++)
         {
             board[i][j] = '.';
         }
@@ -122,28 +184,33 @@ int main()
         printf("\n");
     }*/
 
-//random_cells(board);
-config(board);
+if (check_config()==1)
+    random_cells(board);
+else if(check_config()==0)
+    config(board);
+else
+    printf("Blad w przelaczniku random\n");
 
 for(c = 1; c<30;c++){
-        for(d=1;d<30;d++){
-            printf("%c ", board[c][d]);
+        for(d=1;d<60;d++){
+            printf("%c", board[c][d]);
         }
         printf("\n");
     }
 for(i=0;i<31;i++)
 {
-    for(j=0;j<31;j++)
+    for(j=0;j<61;j++)
     {
         board2[i][j] = 0;
     }
 }
 printf("Wcisnij dowolny klawisz by rozpoczac animacje\n");
 system("pause");
-while(1==1)
+while(i==1)
 {
-    delay(0.3);
+    delay(0.1);
     next_step(board,board2);
+}
 }
 
     /*for(c = 0; c<16;c++){
@@ -152,7 +219,7 @@ while(1==1)
         }
         printf("\n");
     }*/
-}
+
 
 
 
@@ -179,9 +246,5 @@ while(1==1)
             count = count + (board[i+1][j+1] ? 'X' : '.');
             board2[i][j] = count;
             count = 0;
+*/
 
-FILE *plik = fopen("adrianos.txt", "r");
-int n;
-fscanf(plik, "%d", &n);
-printf("%d", n);
-fclose(plik);*/
