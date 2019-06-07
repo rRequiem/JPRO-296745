@@ -1,250 +1,133 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <time.h>
-
-int check_config()
-{
-    int i,j;
-    FILE *fp;
-   if ((fp=fopen("config.txt", "r"))==NULL) {
-     printf ("Nie moge otworzyc pliku config.txt do zapisu!\n");
-     exit(1);
-     }
-    char tab[13];
-    for(i=0;i<13;i++)
-    {
-        fscanf(fp,"%c", &tab[i]);
-    }
-    if(tab[12] == 'y')
-        return 1;
-    else if(tab[12] == 'n')
-        return 0;
-    else
-        return 3;
-    fclose (fp);
-}
-
-void cells(char board[16][16])
-{
-    board[1+8][1+8] = 'X';
-    board[1+8][2+8] = 'X';
-    board[1+8][3+8] = 'X';
-    board[2+8][1+8] = 'X';
-    board[3+8][2+8] = 'X';
-
-}
-
-void config(char board[31][61])
-{
-    char k = '1';
-    int i,j;
-    FILE *fp;
-   if ((fp=fopen("config.txt", "r"))==NULL) {
-     printf ("Nie moge otworzyc pliku config.txt do zapisu!\n");
-     exit(1);
-     }
-
-for(i=1;i<30;i++)
-{
-    for(j=1;j<60;j++)
-    {
-        if(k!=EOF){
-            do
-            {
-                fscanf(fp, "%c", &k);
-            }
-            while (k!='.' && k!='X' && k!=EOF);
-        }
-        board[i][j]=k;
-    }
-
-}
-fclose (fp);
-/*for(i=1;i<30;i++)
-{
-    for(j=1;j<60;j++)
-    {
-        printf("%c", board[i][j]);
-    }
-    printf("\n");
-}
+#include<time.h>
 
 
-   return 0;*/
-}
-void out()
-{
 
-}
+void delay(float seconds){
 
-void random_cells(char board[31][61])
-{
-int p,z,x,y;
-srand( time( NULL ) );
-printf("Podaj ilosc zywych komorek (max 225)\n");
-scanf("%d", &p);
-for(z=0;z<p;z++)
-{
-    x = rand()%29+1;
-    y = rand()%59+1;
-    board[x][y] = 'X';
-}
-}
-
-void delay(float seconds)
-{
     int milli_seconds = 1000 * seconds;
     clock_t start_time = clock();
     while (clock() < start_time + milli_seconds);
 }
 
-void next_step(char board[31][61], int board2[31][61])
+
+void start(char tab[31][31])
 {
-    int i,j,count=0;
-    for(i=1;i<30;i++)
+    int x,y,z,c;
+    printf("Podaj liczbe=");
+    scanf("%d",&c);
+    srand(time(NULL));
+    for(z=0;z<c;z++)
     {
-        for(j=1;j<60;j++)
-        {
-            if(board[i-1][j-1] == 'X')
-                count++;
-            if(board[i-1][j] == 'X')
-                count++;
-            if(board[i-1][j+1] == 'X')
-                count++;
-            if(board[i][j-1] == 'X')
-                count++;
-            if(board[i][j+1] == 'X')
-                count++;
-            if(board[i+1][j-1] == 'X')
-                count++;
-            if(board[i+1][j] == 'X')
-                count++;
-            if(board[i+1][j+1] == 'X')
-                count++;
-            board2[i][j] = count;
-            count = 0;
-
-        }
+        x=rand()%29+1;
+        y=rand()%29+1;
+        tab[x][y]='X';
     }
-    for(i=0;i<31;i++)
+    for(int i=0;i<30;i++)
     {
-        for(j=0;j<61;j++)
-        {
-            if(board2[i][j] == 3)
-                board[i][j] = 'X';
-            else if(board2[i][j] == 2)
-                board[i][j] = board[i][j];
-            else
-                board[i][j] = '.';
-        }
+        for(int j=0;j<30;j++)
+            {
+            printf("%c ",tab[i][j]);
+            }
+            printf("\n");
     }
 
-    system("cls");
-    for(i=1;i<30;i++)
+}
+
+void fill(char tab[31][31])
+{
+
+    for(int i=0;i<31;i++)
     {
-        for(j=1;j<60;j++)
+        for(int j=0;j<31;j++)
         {
-            printf("%c",board[i][j]);
+            tab[i][j]='.';
+        }
+    }
+    for(int i=0;i<30;i++)
+    {
+
+        for(int j=0;j<30;j++)
+        {
+            printf("%c ",tab[i][j]);
         }
         printf("\n");
     }
-    /*int alive=0,dead=0;
+}
 
-    for(i=1;i<30;i++)
+
+
+void sasiad(char tab[31][31], int tab2[31][31])
+{
+
+int x,y,s;
+s=0;
+    for(x=0;x<31;x++)
     {
-        for(j=1;j<30;j++)
+        for(y=0;y<31;y++)
         {
-            if(board[i][j] == 'X')
-                alive=alive+1;
-            else
-                dead=dead+1;
+    if(tab[x+1][y]=='X')
+        s++;
+    if(tab[x][y+1]=='X')
+        s++;
+    if(tab[x-1][y]=='X')
+        s++;
+    if(tab[x+1][y+1]=='X')
+        s++;
+    if(tab[x+1][y-1]=='X')
+        s++;
+    if(tab[x-1][y+1]=='X')
+        s++;
+    if(tab[x][y-1]=='X')
+        s++;
+    if(tab[x-1][y-1]=='X')
+        s++;
+    tab2[x][y]=s++;
+    s=0;
+
         }
-        system("cls");
-    }*/
+    }
+
+system("cls");
+
+for( x=0;x<31;x++)
+{
+    for(y=0; y<31;y++)
+        {
+    if(tab2[x][y]==3)
+        tab[x][y]='X';
+    else if(tab2[x][y]==2)
+        tab[x][y]=tab[x][y];
+   else
+        tab[x][y]='.';
+        }
+}
+
+   for(x=0;x<30;x++)
+    {
+
+            for(y=0;y<30;y++){
+                printf("%c ",tab[x][y]);
+        }
+        printf("\n");
+    }
 
 }
 
 int main()
 {
-    int i,j,c,d,seconds=1;
-    char board[31][61];
-    int board2[31][61];
-    for(i=0;i<31;i++)
-    {
-        for(j=0;j<61;j++)
-        {
-            board[i][j] = '.';
-        }
-    }
-    /*for(c = 0; c<16;c++){
-        for(d=0;d<16;d++){
-            printf("%c ", board[c][d]);
-        }
-        printf("\n");
-    }*/
+char tab[31][31];
+int tab2[31][31];
 
-if (check_config()==1)
-    random_cells(board);
-else if(check_config()==0)
-    config(board);
-else
-    printf("Blad w przelaczniku random\n");
-
-for(c = 1; c<30;c++){
-        for(d=1;d<60;d++){
-            printf("%c", board[c][d]);
-        }
-        printf("\n");
-    }
-for(i=0;i<31;i++)
+fill(tab);
+start(tab);
+printf("\n \n");
+//tablica();
+while(1==1)
 {
-    for(j=0;j<61;j++)
-    {
-        board2[i][j] = 0;
-    }
-}
-printf("Wcisnij dowolny klawisz by rozpoczac animacje\n");
-system("pause");
-while(i==1)
-{
-    delay(0.1);
-    next_step(board,board2);
+delay(1);
+sasiad(tab,tab2);
+
 }
 }
-
-    /*for(c = 0; c<16;c++){
-        for(d=0;d<16;d++){
-            printf("%d ", board2[c][d]);
-        }
-        printf("\n");
-    }*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- /*           count = count + (board[i-1][j-1] ? 'X' : '.');
-            count = count + (board[i-1][j] ? 'X' : '.');
-            count = count + (board[i-1][j+1] ? 'X' : '.');
-            count = count + (board[i][j-1] ? 'X' : '.');
-            count = count + (board[i][j+1] ? 'X' : '.');
-            count = count + (board[i+1][j-1] ? 'X' : '.');
-            count = count + (board[i+1][j] ? 'X' : '.');
-            count = count + (board[i+1][j+1] ? 'X' : '.');
-            board2[i][j] = count;
-            count = 0;
-*/
-
